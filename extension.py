@@ -21,12 +21,12 @@ class Hub:
                 "password" : "User@123"}
         res = requests.post(self.api_url + path ,data=data)
         self.auth_token = json.loads(res.text)['auth_token']
-        return self.auth_token
 
     def get_hub_id(self):
         path = '/hubs/find_by_url'
         data = {"hub_url": self.hub_url}
         res = requests.post(self.api_url + path, data=data)
+        print(res)
         self.hub_id = json.loads(res.text)['id']
 
     def send_chat(self,message):
@@ -41,19 +41,18 @@ class Hub:
         res_json = json.loads(res.text)
         print(json.dumps(res_json,indent=2))
 
-def start(api_url, hub_url):
+def start(api_url, hub_url,message):
     hub = Hub(api_url,hub_url)
-    print("auth-",hub.auth_token)
     hub.create_session()
-    print("auth-",hub.auth_token)
-    print("id-",hub.hub_id)
     hub.get_hub_id()
-    print("id-",hub.hub_id)
+    hub.send_chat(message)
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--hub_url",help="Hub URL")
 parser.add_argument("--api_url",help="API URL")
+parser.add_argument("--msg",help="Message")
 
 if __name__ == "__main__":
     args = parser.parse_args()
-    start(args.api_url, args.hub_url)
+    start(args.api_url, args.hub_url,args.msg)
